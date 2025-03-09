@@ -11,10 +11,10 @@
 2. **快速查看示例效果**：
    ```bash
    # 安装依赖
-   pnpm install
+   npm ci
 
    # 构建项目并自动检查打包产物
-   pnpm run build
+   npm run build
    ```
    运行后，控制台会显示检查结果，包括 ES6+ 语法错误的具体位置和代码片段
 
@@ -29,7 +29,7 @@
      - `.eslintrc.dist.js` - 用于检查打包产物的 ESLint 配置
    - 安装必要的依赖：
      ```bash
-     pnpm add -D eslint-plugin-es5 glob
+     npm install --save-dev eslint-plugin-es5 glob
      ```
      注意：eslint 、@babel/eslint-parser 也需要预先安装好，请根据项目实际情况安装特定版本
    - 在 webpack 配置中添加插件：
@@ -59,7 +59,7 @@
 
 ## 工作流程
 
-1. 开发阶段：编写 ES6+ 代码，使用 `pnpm run lint` 检查代码质量
+1. 开发阶段：编写 ES6+ 代码，使用 `npm run lint` 检查代码质量
 2. 构建阶段：使用 Webpack 和 Babel 将 ES6+ 代码转换为 ES5
 3. 检查阶段：使用 `ES5CheckPlugin` 自动检查打包产物是否包含 ES6+ 语法
 
@@ -70,7 +70,7 @@
 启动开发服务器：
 
 ```bash
-pnpm run dev
+npm run dev
 ```
 
 ### 代码检查
@@ -78,13 +78,13 @@ pnpm run dev
 检查源代码是否符合规范：
 
 ```bash
-pnpm run lint
+npm run lint
 ```
 
 自动修复可修复的问题：
 
 ```bash
-pnpm run lint-fix
+npm run lint-fix
 ```
 
 ### 生产构建
@@ -92,13 +92,13 @@ pnpm run lint-fix
 构建开发版本（不压缩）：
 
 ```bash
-pnpm run build
+npm run build
 ```
 
 构建生产版本（不压缩）：
 
 ```bash
-pnpm run build:prod
+npm run build:prod
 ```
 
 构建后的文件将位于 `dist` 目录中。
@@ -108,7 +108,7 @@ pnpm run build:prod
 检查 dist 目录中的所有 JS 文件是否包含 ES6+ 语法：
 
 ```bash
-pnpm run check-dist
+npm run check-dist
 ```
 
 ## 自动检查

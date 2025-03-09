@@ -53,14 +53,4 @@ module.exports = {
     // 允许使用 Symbol 类型
     'es5/no-typeof-symbol': 'off',
   },
-  // 添加全局变量
-  globals: {
-    // webpack 运行时变量
-    __webpack_require__: 'readonly',
-    __webpack_exports__: 'readonly',
-    __webpack_modules__: 'readonly',
-    __webpack_module_cache__: 'readonly',
-  },
-  // 忽略 core-js 的 polyfill
-  ignorePatterns: ['**/core-js/**', '**/node_modules/**'],
 };
