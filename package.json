@@ -4,9 +4,12 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint ./src",
-    "build": "webpack --mode production",
+    "build": "webpack --mode development",
+    "build:prod": "webpack --mode production --no-optimization-minimize",
     "dev": "webpack serve --open",
-    "lint-fix": "eslint ./src --fix"
+    "lint-fix": "eslint ./src --fix",
+    "lint-dist": "eslint ./dist/**/*.js -c .eslintrc.dist.js",
+    "build-and-check": "pnpm run build && pnpm run lint-dist"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +23,7 @@
     "babel-loader": "^10.0.0",
     "eslint": "^7.32.0",
     "eslint-plugin-es5": "^1.5.0",
+    "glob": "^11.0.1",
     "globals": "^16.0.0",
     "html-webpack-plugin": "^5.6.3",
     "webpack": "^5.98.0",
