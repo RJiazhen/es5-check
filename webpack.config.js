@@ -119,10 +119,20 @@ module.exports = {
     devMiddleware: {
       writeToDisk: true, // 将文件写入磁盘，以便 ES5CheckPlugin 可以检查它们
     },
-    // 添加钩子，在开发服务器启动前先执行打包
-    onBeforeSetupMiddleware: function (devServer) {
+    // 使用 setupMiddlewares 代替 onBeforeSetupMiddleware
+    setupMiddlewares: (middlewares, devServer) => {
       console.log('开发服务器启动前执行打包...');
       // webpack-dev-server v4 会自动先执行一次打包
+
+      if (!devServer) {
+        throw new Error('webpack-dev-server is not defined');
+      }
+
+      devServer.app.get('/check-status', (req, res) => {
+        res.json({ status: 'ES5 检查已完成' });
+      });
+
+      return middlewares;
     },
     // 添加钩子，在开发服务器启动后执行
     onListening: function (devServer) {
