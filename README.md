@@ -11,6 +11,7 @@
 - **支持检查所有打包产物，包括代码分割后的多个文件**
 - **禁用代码压缩和混淆，便于检查转换结果**
 - **零配置使用，插件提供合理的默认值**
+- **包含测试文件，用于验证 ES6+ 语法检测功能**
 
 ## 工作流程
 
@@ -64,40 +65,47 @@ pnpm run build:prod
 
 构建后的文件将位于 `dist` 目录中。
 
-### 打包产物检查
-
-检查打包产物是否包含 ES6+ 语法：
-
-```bash
-pnpm run lint-dist
-```
-
-构建并检查：
-
-```bash
-pnpm run build-and-check
-```
-
 ## 自动检查
 
 项目配置了自动检查机制，在每次构建完成后会自动检查打包产物是否包含 ES6+ 语法。如果检测到 ES6+ 语法，会在控制台显示警告信息。
 
-自动检查功能支持以下特性：
-- 检查 `dist` 目录下的所有 JS 文件，包括代码分割后的多个文件
-- 显示每个文件的大小和总文件大小
-- 只报告真正的 ES6+ 语法问题，忽略代码风格问题
+### 检查策略
 
-ES5CheckPlugin 插件提供了以下默认配置：
-- `jsGlob: '**/*.js'` - 检查所有 JS 文件
-- `outputDir: 'dist'` - 默认输出目录
-- `configFile: '.eslintrc.dist.js'` - 默认配置文件
-- `failOnError: false` - 默认不中断构建
+为了避免 webpack 运行时代码的干扰，检查策略做了以下调整：
+
+1. **检查所有业务代码**：
+   - 默认检查 `dist` 目录下的所有 `.bundle.js` 文件
+   - 通过 `excludePatterns` 选项排除 webpack 运行时代码和第三方库代码
+
+2. **明确排除特定文件**：
+   - 在 webpack 配置中，通过 `excludePatterns` 选项排除 'runtime' 和 'vendors' 相关文件
+   - 这确保我们只检查业务代码，而不检查框架生成的代码
 
 如果需要在检测到 ES6+ 语法时中断构建，可以在 `webpack.config.js` 中将 `ES5CheckPlugin` 的 `failOnError` 选项设置为 `true`：
 
 ```javascript
 // 使用自定义配置
-new ES5CheckPlugin({ failOnError: true })
+new ES5CheckPlugin({
+  excludePatterns: ['runtime', 'vendors'],
+  failOnError: true
+})
+```
+
+## 测试 ES6+ 语法检测
+
+项目包含一个特殊的测试文件 `src/skip-babel.js`，它使用了 ES6+ 语法并且被配置为跳过 Babel 转换。这个文件的目的是：
+
+1. 在打包产物中产生 ES6+ 语法，用于测试 ES5CheckPlugin 的检测功能
+2. 演示如何在 webpack 配置中排除特定文件不经过 Babel 转换
+3. 提供一个实际的例子，展示 ES6+ 语法在不兼容的浏览器中会导致错误
+
+当您运行 `pnpm run build` 时，应该会看到 ES5CheckPlugin 检查所有打包产物是否包含 ES6+ 语法。由于我们已经配置了 webpack 运行时代码不使用 ES6+ 语法，所以所有打包产物都应该通过检查。
+
+要禁用这个测试，只需在 `src/index.js` 中注释掉对 `skip-babel.js` 的导入：
+
+```javascript
+// 注释掉这行可以避免 ES6 语法错误
+// import { arrowFunction, TestClass, CONSTANT_VALUE } from './skip-babel';
 ```
 
 ## ES6+ 语法检查规则
@@ -127,7 +135,8 @@ new ES5CheckPlugin({ failOnError: true })
 - `src/` - 源代码目录
   - `index.js` - 应用入口文件
   - `index.html` - HTML 模板
-  - `es6-example.js` - 包含 ES6+ 语法的示例文件
+  - `es6-example.js` - 包含 ES6+ 语法的示例文件（会被 Babel 转换）
+  - `skip-babel.js` - 包含 ES6+ 语法的测试文件（跳过 Babel 转换）
 - `scripts/` - 脚本目录
   - `es5-check-plugin.js` - webpack 插件，用于自动检查
 - `.babelrc.json` - Babel 配置

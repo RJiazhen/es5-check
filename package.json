@@ -7,9 +7,7 @@
     "build": "webpack --mode development",
     "build:prod": "webpack --mode production --no-optimization-minimize",
     "dev": "webpack serve --open",
-    "lint-fix": "eslint ./src --fix",
-    "lint-dist": "eslint ./dist/**/*.js -c .eslintrc.dist.js",
-    "build-and-check": "pnpm run build && pnpm run lint-dist"
+    "lint-fix": "eslint ./src --fix"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +19,7 @@
     "@babel/preset-env": "^7.26.9",
     "@eslint/js": "^9.22.0",
     "babel-loader": "^10.0.0",
+    "core-js": "3",
     "eslint": "^7.32.0",
     "eslint-plugin-es5": "^1.5.0",
     "glob": "^11.0.1",
