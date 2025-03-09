@@ -104,9 +104,7 @@ module.exports = {
       minify: false, // 禁用 HTML 压缩
     }),
     // 使用 ES5CheckPlugin，检查所有打包产物
-    new ES5CheckPlugin({
-      failOnError: false,
-    }),
+    new ES5CheckPlugin(),
   ],
   devServer: {
     static: {

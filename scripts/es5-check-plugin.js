@@ -11,11 +11,8 @@ class ES5CheckPlugin {
   constructor(options = {}) {
     /** 默认参数 */
     this.options = {
-      jsGlob: '**/*.js', // 默认检查所有 JS 文件
-      outputDir: 'dist', // 默认输出目录
       configFile: '.eslintrc.dist.js', // 默认配置文件
       failOnError: false, // 默认不中断构建
-      excludePatterns: [], // 排除的文件模式
       ...options,
     };
   }
@@ -42,16 +39,7 @@ class ES5CheckPlugin {
             if (filename.endsWith('.js')) {
               const filePath = path.join(outputPath, filename);
               if (fs.existsSync(filePath)) {
-                // 检查是否在排除列表中
-                const shouldExclude = this.options.excludePatterns.some(
-                  (pattern) => {
-                    return new RegExp(pattern).test(filename);
-                  },
-                );
-
-                if (!shouldExclude) {
-                  jsFiles.push(filePath);
-                }
+                jsFiles.push(filePath);
               }
             }
           }
