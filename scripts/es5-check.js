@@ -1,7 +1,11 @@
+#!/usr/bin/env node
+
 /**
  * ES5 语法检查工具
  * 这个工具用于检查 JavaScript 文件是否包含 ES6+ 语法
  * 可以作为独立工具使用，也可以被 ES5CheckPlugin 调用
+ *
+ * 命令行用法: node es5-check.js [--config <配置文件>] [--no-details] <文件或目录>...
  */
 
 const { ESLint } = require('eslint');
@@ -185,9 +189,8 @@ function findJSFiles(dir, options = {}) {
 
 // 如果直接运行这个脚本，则检查命令行参数指定的文件
 if (require.main === module) {
-  const args = process.argv.slice(2);
-
   // 解析命令行参数
+  const args = process.argv.slice(2);
   const files = [];
   let configFile = '.eslintrc.dist.js';
   let showDetails = true;
