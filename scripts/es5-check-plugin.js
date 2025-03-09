@@ -153,6 +153,42 @@ class ES5CheckPlugin {
             console.error('[ES5CheckPlugin] 打包产物中检测到 ES6+ 语法:');
             console.log(resultText);
 
+            // 输出更详细的错误信息，包括代码内容
+            console.log('\n[ES5CheckPlugin] 详细错误信息:');
+            filteredResults.forEach((result) => {
+              if (result.errorCount > 0) {
+                console.log(`\n文件: ${result.filePath}`);
+                const fileContent = fs
+                  .readFileSync(result.filePath, 'utf-8')
+                  .split('\n');
+
+                result.messages.forEach((msg) => {
+                  const { line, column, ruleId, message } = msg;
+                  console.log(
+                    `\n第 ${line} 行, 第 ${column} 列: ${message} (${ruleId})`,
+                  );
+
+                  // 输出错误行的代码内容及其上下文
+                  const startLine = Math.max(1, line - 2);
+                  const endLine = Math.min(fileContent.length, line + 2);
+
+                  for (let i = startLine; i <= endLine; i++) {
+                    const isErrorLine = i === line;
+                    const lineContent = fileContent[i - 1] || '';
+                    const linePrefix = isErrorLine ? '> ' : '  ';
+                    console.log(`${linePrefix}${i}: ${lineContent}`);
+
+                    // 如果是错误行，添加指示箭头指向错误位置
+                    if (isErrorLine) {
+                      const pointer =
+                        ' '.repeat(column + 3 + i.toString().length) + '^';
+                      console.log(pointer);
+                    }
+                  }
+                });
+              }
+            });
+
             if (this.options.failOnError) {
               compilation.errors.push(new Error('打包产物中包含 ES6+ 语法'));
             } else {

@@ -103,12 +103,8 @@ module.exports = {
       filename: 'index.html', // 输出的 HTML 文件名
       minify: false, // 禁用 HTML 压缩
     }),
-    // 使用 ES5CheckPlugin，排除 webpack 运行时代码
+    // 使用 ES5CheckPlugin，检查所有打包产物
     new ES5CheckPlugin({
-      excludePatterns: [
-        'runtime', // 排除 webpack 运行时代码
-        'vendors', // 排除第三方库代码
-      ],
       failOnError: false,
     }),
   ],
