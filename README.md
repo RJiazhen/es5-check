@@ -1,6 +1,50 @@
 # ES5 兼容性检查与转换示例
 
-这个项目演示了如何使用 Babel 和 Webpack 将 ES6+ 代码转换为兼容 IE9 的 ES5 代码。
+这个项目演示了如何使用 Babel 和 Webpack 将 ES6+ 代码转换为兼容 IE9 的 ES5 代码，并**自动检查打包产物中是否存在 ES6+ 语法**。
+
+## 重点说明
+
+1. **不经过 Babel 转换的文件**：
+   - `src/skip-babel.js` 文件被配置为跳过 Babel 转换，因此其打包产物中会保留 ES6+ 语法
+   - 这个文件用于演示 ES6+ 语法检测功能
+
+2. **快速查看示例效果**：
+   ```bash
+   # 安装依赖
+   pnpm install
+
+   # 构建项目并自动检查打包产物
+   pnpm run build
+   ```
+   运行后，控制台会显示检查结果，包括 ES6+ 语法错误的具体位置和代码片段
+
+3. **实现自动检查的插件**：
+   - 在 `webpack.config.js` 中添加了 `ES5CheckPlugin` 插件
+   - 该插件会在 Webpack 构建完成后自动检查所有打包产物
+
+4. **在自己项目中实现**：
+   - 复制以下文件到你的项目中：
+     - `scripts/es5-check.js` - ES5 语法检查核心工具
+     - `scripts/es5-check-plugin.js` - Webpack 插件
+     - `.eslintrc.dist.js` - 用于检查打包产物的 ESLint 配置
+   - 安装必要的依赖：
+     ```bash
+     pnpm add -D eslint-plugin-es5 glob
+     ```
+     注意：eslint 、@babel/eslint-parser 也需要预先安装好，请根据项目实际情况安装特定版本
+   - 在 webpack 配置中添加插件：
+     ```javascript
+     const ES5CheckPlugin = require('./scripts/es5-check-plugin');
+
+     // 在 plugins 数组中添加
+     plugins: [
+       // 其他插件...
+       new ES5CheckPlugin()
+     ]
+     ```
+
+5. **报错含义查询**：
+   - 各种 ES6+ 语法报错的具体含义请前往 [eslint-plugin-es5 的 GitHub 主页](https://github.com/nkt/eslint-plugin-es5?tab=readme-ov-file#list-of-supported-rules) 查看
 
 ## 功能特点
 
@@ -17,13 +61,7 @@
 
 1. 开发阶段：编写 ES6+ 代码，使用 `pnpm run lint` 检查代码质量
 2. 构建阶段：使用 Webpack 和 Babel 将 ES6+ 代码转换为 ES5
-3. 检查阶段：使用自定义插件检查打包产物是否包含 ES6+ 语法
-
-## 安装
-
-```bash
-pnpm install
-```
+3. 检查阶段：使用 `ES5CheckPlugin` 自动检查打包产物是否包含 ES6+ 语法
 
 ## 使用方法
 
@@ -104,8 +142,6 @@ new ES5CheckPlugin({
 2. 演示如何在 webpack 配置中排除特定文件不经过 Babel 转换
 3. 提供一个实际的例子，展示 ES6+ 语法在不兼容的浏览器中会导致错误
 
-当您运行 `pnpm run build` 时，应该会看到 ES5CheckPlugin 检查所有打包产物是否包含 ES6+ 语法。
-
 要禁用这个测试，只需在 `src/index.js` 中注释掉对 `skip-babel.js` 的导入：
 
 ```javascript
@@ -121,8 +157,6 @@ new ES5CheckPlugin({
 - **类语法**：检测 `class` 关键字和类相关特性
 - **常量和块级作用域变量**：检测 `const` 和 `let` 关键字
 - **模板字符串**：检测 `` `${var}` `` 语法
-
-注意：检查工具会忽略代码风格相关的规则（如 `prefer-template`、`prefer-destructuring` 等），只关注真正的 ES6+ 语法特性。
 
 ## 禁用代码压缩
 
@@ -141,10 +175,10 @@ new ES5CheckPlugin({
   - `index.js` - 应用入口文件
   - `index.html` - HTML 模板
   - `es6-example.js` - 包含 ES6+ 语法的示例文件（会被 Babel 转换）
-  - `skip-babel.js` - 包含 ES6+ 语法的测试文件（跳过 Babel 转换）
+  - `skip-babel.js` - 包含 ES6+ 语法的测试文件（**跳过 Babel 转换**，产物中保留 ES6+ 语法）
 - `scripts/` - 脚本目录
   - `es5-check.js` - ES5 语法检查工具，可作为独立工具使用
-  - `es5-check-plugin.js` - webpack 插件，用于自动检查
+  - `es5-check-plugin.js` - Webpack 插件，用于自动检查打包产物中的 ES6+ 语法
 - `.babelrc.json` - Babel 配置
 - `.eslintrc.js` - ESLint 配置（源代码）
 - `.eslintrc.dist.js` - ESLint 配置（打包产物）
