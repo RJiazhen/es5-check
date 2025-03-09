@@ -65,28 +65,33 @@ pnpm run build:prod
 
 构建后的文件将位于 `dist` 目录中。
 
+### 检查打包产物
+
+检查 dist 目录中的所有 JS 文件是否包含 ES6+ 语法：
+
+```bash
+pnpm run check-dist
+```
+
 ## 自动检查
 
 项目配置了自动检查机制，在每次构建完成后会自动检查打包产物是否包含 ES6+ 语法。如果检测到 ES6+ 语法，会在控制台显示警告信息。
 
 ### 检查策略
 
-为了避免 webpack 运行时代码的干扰，检查策略做了以下调整：
+1. **检查所有打包产物**：
+   - 默认检查 webpack 输出的所有 JS 文件
+   - 详细显示每个文件中的 ES6+ 语法错误
 
-1. **检查所有业务代码**：
-   - 默认检查 `dist` 目录下的所有 `.bundle.js` 文件
-   - 通过 `excludePatterns` 选项排除 webpack 运行时代码和第三方库代码
-
-2. **明确排除特定文件**：
-   - 在 webpack 配置中，通过 `excludePatterns` 选项排除 'runtime' 和 'vendors' 相关文件
-   - 这确保我们只检查业务代码，而不检查框架生成的代码
+2. **错误处理**：
+   - 默认情况下，检测到 ES6+ 语法会显示警告但不会中断构建
+   - 可以配置为在检测到 ES6+ 语法时中断构建
 
 如果需要在检测到 ES6+ 语法时中断构建，可以在 `webpack.config.js` 中将 `ES5CheckPlugin` 的 `failOnError` 选项设置为 `true`：
 
 ```javascript
 // 使用自定义配置
 new ES5CheckPlugin({
-  excludePatterns: ['runtime', 'vendors'],
   failOnError: true
 })
 ```
@@ -99,7 +104,7 @@ new ES5CheckPlugin({
 2. 演示如何在 webpack 配置中排除特定文件不经过 Babel 转换
 3. 提供一个实际的例子，展示 ES6+ 语法在不兼容的浏览器中会导致错误
 
-当您运行 `pnpm run build` 时，应该会看到 ES5CheckPlugin 检查所有打包产物是否包含 ES6+ 语法。由于我们已经配置了 webpack 运行时代码不使用 ES6+ 语法，所以所有打包产物都应该通过检查。
+当您运行 `pnpm run build` 时，应该会看到 ES5CheckPlugin 检查所有打包产物是否包含 ES6+ 语法。
 
 要禁用这个测试，只需在 `src/index.js` 中注释掉对 `skip-babel.js` 的导入：
 
@@ -138,6 +143,7 @@ new ES5CheckPlugin({
   - `es6-example.js` - 包含 ES6+ 语法的示例文件（会被 Babel 转换）
   - `skip-babel.js` - 包含 ES6+ 语法的测试文件（跳过 Babel 转换）
 - `scripts/` - 脚本目录
+  - `es5-check.js` - ES5 语法检查工具，可作为独立工具使用
   - `es5-check-plugin.js` - webpack 插件，用于自动检查
 - `.babelrc.json` - Babel 配置
 - `.eslintrc.js` - ESLint 配置（源代码）

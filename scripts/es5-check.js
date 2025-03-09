@@ -195,6 +195,25 @@ if (require.main === module) {
   let configFile = '.eslintrc.dist.js';
   let showDetails = true;
 
+  // 显示帮助信息的函数
+  function showHelp() {
+    console.log(`
+ES5 语法检查工具
+用法: node es5-check.js [选项] <文件或目录>...
+
+选项:
+  --config <文件路径>  指定 ESLint 配置文件 (默认: .eslintrc.dist.js)
+  --no-details         不显示详细错误信息
+  --help               显示此帮助信息
+
+示例:
+  node es5-check.js ./dist                  检查 dist 目录中的所有 JS 文件
+  node es5-check.js --no-details ./dist     检查 dist 目录但不显示详细错误信息
+  node es5-check.js ./dist/main.bundle.js   检查特定的 JS 文件
+    `);
+    process.exit(0);
+  }
+
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     if (arg === '--config' && i + 1 < args.length) {
@@ -202,8 +221,11 @@ if (require.main === module) {
       i++;
     } else if (arg === '--no-details') {
       showDetails = false;
+    } else if (arg === '--help' || arg === '-h') {
+      showHelp();
     } else if (arg.startsWith('--')) {
       console.error(`未知参数: ${arg}`);
+      console.error('使用 --help 查看帮助信息');
       process.exit(1);
     } else {
       files.push(arg);
@@ -211,9 +233,11 @@ if (require.main === module) {
   }
 
   if (files.length === 0) {
+    console.error('错误: 未指定要检查的文件或目录');
     console.error(
       '用法: node es5-check.js [--config <配置文件>] [--no-details] <文件或目录>...',
     );
+    console.error('使用 --help 查看更多信息');
     process.exit(1);
   }
 

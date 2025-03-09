@@ -45,7 +45,12 @@ class ES5CheckPlugin {
           }
 
           if (jsFiles.length === 0) {
-            console.error(`[ES5CheckPlugin] 错误: 未找到任何 JS 文件`);
+            const errorMsg =
+              '[ES5CheckPlugin] 错误: 未找到任何 JS 文件，请检查 webpack 配置';
+            console.error(errorMsg);
+
+            // 添加警告而不是直接返回，确保用户注意到这个问题
+            compilation.warnings.push(new Error(errorMsg));
             return callback();
           }
 
@@ -57,15 +62,28 @@ class ES5CheckPlugin {
           });
 
           // 使用 es5-check.js 模块检查文件
-          const { hasErrors } = await checkES5Syntax(jsFiles, {
+          const { hasErrors, results } = await checkES5Syntax(jsFiles, {
             configFile: this.options.configFile,
             showDetails: true,
           });
 
-          if (hasErrors && this.options.failOnError) {
-            compilation.errors.push(new Error('打包产物中包含 ES6+ 语法'));
-          } else if (hasErrors) {
-            compilation.warnings.push(new Error('打包产物中包含 ES6+ 语法'));
+          if (hasErrors) {
+            // 计算错误总数
+            const totalErrors = results.reduce(
+              (sum, result) => sum + result.errorCount,
+              0,
+            );
+            const errorMsg = `打包产物中包含 ${totalErrors} 个 ES6+ 语法错误`;
+
+            if (this.options.failOnError) {
+              compilation.errors.push(new Error(errorMsg));
+            } else {
+              compilation.warnings.push(new Error(errorMsg));
+            }
+          } else {
+            console.log(
+              '[ES5CheckPlugin] 检查通过! 所有文件都符合 ES5 语法标准。',
+            );
           }
 
           callback();
