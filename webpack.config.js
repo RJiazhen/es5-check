@@ -104,15 +104,30 @@ module.exports = {
       minify: false, // 禁用 HTML 压缩
     }),
     // 使用 ES5CheckPlugin，检查所有打包产物
-    new ES5CheckPlugin(),
+    new ES5CheckPlugin({
+      outputResult: true, // 启用结果输出
+    }),
   ],
   devServer: {
     static: {
       directory: path.join(__dirname, 'dist'), // 静态文件目录
     },
     compress: false, // 禁用 gzip 压缩
-    port: 9000, // 开发服务器端口
+    port: 9001, // 开发服务器端口
     hot: true, // 启用热模块替换
+    // 使用 webpack-dev-server v4 兼容的配置
+    devMiddleware: {
+      writeToDisk: true, // 将文件写入磁盘，以便 ES5CheckPlugin 可以检查它们
+    },
+    // 添加钩子，在开发服务器启动前先执行打包
+    onBeforeSetupMiddleware: function (devServer) {
+      console.log('开发服务器启动前执行打包...');
+      // webpack-dev-server v4 会自动先执行一次打包
+    },
+    // 添加钩子，在开发服务器启动后执行
+    onListening: function (devServer) {
+      console.log('开发服务器已启动，可以在浏览器中查看检查结果');
+    },
   },
   // 添加源码映射，便于调试
   devtool: 'source-map',

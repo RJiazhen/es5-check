@@ -6,7 +6,7 @@
     "lint": "eslint ./src",
     "build": "webpack --mode development",
     "build:prod": "webpack --mode production --no-optimization-minimize",
-    "dev": "webpack serve --open",
+    "dev": "npm run build && webpack serve --open",
     "lint-fix": "eslint ./src --fix",
     "check-dist": "node scripts/es5-check.js ./dist"
   },
@@ -15,22 +15,22 @@
   "license": "ISC",
   "description": "",
   "engines": {
-    "node": "22.12.0"
+    "node": ">=14.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.9",
-    "@babel/eslint-parser": "^7.26.8",
-    "@babel/preset-env": "^7.26.9",
-    "@eslint/js": "^9.22.0",
-    "babel-loader": "^10.0.0",
-    "core-js": "3",
+    "@babel/core": "^7.18.13",
+    "@babel/eslint-parser": "^7.18.9",
+    "@babel/preset-env": "^7.18.10",
+    "@eslint/js": "^8.33.0",
+    "babel-loader": "^8.2.5",
+    "core-js": "^3.24.1",
     "eslint": "^7.32.0",
     "eslint-plugin-es5": "^1.5.0",
-    "glob": "^11.0.1",
-    "globals": "^16.0.0",
-    "html-webpack-plugin": "^5.6.3",
-    "webpack": "^5.98.0",
-    "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "^5.2.0"
+    "glob": "^8.0.3",
+    "globals": "^13.17.0",
+    "html-webpack-plugin": "^5.5.0",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.10.0"
   }
 }
